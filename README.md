@@ -1,3 +1,5 @@
+
+dev
 # Proyecto Integrador
 
 Sistema de prestación de servicios para el hogar.
@@ -41,207 +43,100 @@ El prestador podrá:
 
 ### Frontend
 
-* React
-* TypeScript
-* CSS
-* Vite
+- React
+- TypeScript
+- CSS
 
 ### Backend
 
-* Node.js
-* Express
-* TypeScript
+- Node.js
+- Express
+- TypeScript
 
 ### Base de datos
 
-* PostgreSQL
+- PostgreSQL
 
----
+## Roles
 
-## Requisitos
+### Cliente
 
-Para ejecutar el proyecto se necesita tener instalado:
+El cliente puede:
 
-* Node.js
-* npm
-* PostgreSQL
-* Git
+- Crear una cuenta.
+- Iniciar sesión.
+- Buscar prestadores de servicios.
+- Consultar el perfil de un prestador.
+- Solicitar una visita.
+- Consultar el estado de sus solicitudes.
 
----
+### Prestador de servicios
+
+El prestador puede:
+
+- Crear una cuenta.
+- Completar su perfil profesional.
+- Indicar los servicios que ofrece.
+- Recibir solicitudes de visita.
+- Aceptar o rechazar solicitudes.
+- Consultar sus solicitudes.
 
 ## Estructura del proyecto
 
-```text
-proyecto-integrador/
-│
-├── frontend/              # Aplicación React
-│   ├── src/
-│   ├── package.json
-│   ├── package-lock.json
-│   └── ...
-│
-├── backend/               # API REST con Express
-│   ├── src/
-│   ├── package.json
-│   ├── package-lock.json
-│   └── ...
-│
-├── database/              # Base de datos
-│   ├── migrations/
-│   ├── seeds/
-│   └── README.md
-│
-├── .env.example           # Variables de entorno requeridas
+```
+home-services/
+├── frontend/       # Aplicación React
+├── backend/        # API REST con Express
+├── database/       # Migraciones y seeds de PostgreSQL
+├── .env.example
 ├── .gitignore
 └── README.md
 ```
 
----
+## Requisitos
+
+- Node.js
+- npm
+- PostgreSQL
+- Git
 
 ## Instalación
 
-### 1. Clonar el repositorio
+Clonar el repositorio:
 
 ```bash
-git clone https://github.com/NCastellini/metodologia-2-grupo-7.git
-cd proyecto-integrador
+git clone <repository-url>
+cd home-services
 ```
 
-### 2. Instalar dependencias del frontend
+Instalar las dependencias del frontend:
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 3. Instalar dependencias del backend
+Instalar las dependencias del backend:
 
 ```bash
 cd ../backend
 npm install
 ```
 
-### 4. Configurar las variables de entorno
+Configurar las variables de entorno a partir de `.env.example`.
 
-Crear un archivo `.env` a partir de `.env.example`:
+## Desarrollo
 
-```bash
-cp .env.example .env
-```
-
-Completar las variables necesarias según la configuración local de PostgreSQL.
-
-**El archivo `.env` no debe subirse al repositorio.**
-
----
-
-## Base de datos
-
-El proyecto utiliza PostgreSQL.
-
-Cada integrante debe tener una instancia local de PostgreSQL disponible.
-
-La configuración de conexión se encuentra definida mediante variables de entorno.
-
-Las migraciones y seeds del proyecto se almacenarán en:
-
-```text
-database/
-├── migrations/
-└── seeds/
-```
-
-La estructura y los pasos necesarios para preparar la base de datos se documentarán en `database/README.md`.
-
----
-
-## Ejecución en desarrollo
-
-### Frontend
-
-Desde la carpeta `frontend`:
+Ejecutar el frontend:
 
 ```bash
+cd frontend
 npm run dev
 ```
 
-La aplicación estará disponible en la dirección indicada por Vite en la terminal.
-
-### Backend
-
-Desde la carpeta `backend`:
+Ejecutar el backend:
 
 ```bash
+cd backend
 npm run dev
-```
-
-La API estará disponible en el puerto configurado mediante las variables de entorno.
-
----
-
-## Variables de entorno
-
-Las variables necesarias se encuentran documentadas en:
-
-```text
-.env.example
-```
-
-Ejemplo:
-
-```env
-PORT=3000
-
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_NAME=proyecto_integrador
-DATABASE_USER=postgres
-DATABASE_PASSWORD=password
-
-JWT_SECRET=super_secret
-```
-
-> Los valores reales de las variables de entorno son locales y no deben versionarse.
-
----
-
-## Estado del proyecto
-
-El proyecto se encuentra en la etapa inicial de configuración.
-
-### Estado actual
-
-* [x] Configuración inicial del frontend.
-* [x] Configuración inicial del backend.
-* [x] Configuración inicial de PostgreSQL.
-* [x] Configuración de variables de entorno.
-* [x] Configuración del repositorio.
-
-### Próximos pasos
-
-* [ ] Diseño de la base de datos.
-* [ ] Implementación del registro e inicio de sesión.
-* [ ] Implementación de perfiles.
-* [ ] Implementación de búsqueda de prestadores.
-* [ ] Implementación de solicitudes de visita.
-* [ ] Gestión de solicitudes por parte del prestador.
-* [ ] Integración frontend/backend.
-* [ ] Pruebas del sistema.
-
----
-
-## Integrantes
-
-- Castellini Nicolas
-- Strizzi Román
-- Peralta Julián
-
----
-
-## Repositorio
-
-Repositorio del proyecto:
-
-```text
-https://github.com/NCastellini/metodologia-2-grupo-7.git
 ```
