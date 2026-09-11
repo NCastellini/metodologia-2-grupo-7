@@ -1,11 +1,43 @@
-# Trabajo práctico - Metodología 2 - Grupo 7
-Integrantes:
-- Castellini Nicolas
-- Strizzi Román
-- Peralta Julián
 
-Nuestro proyecto consiste en un sistema de prestación de servicios para el hogar con dos roles principales, el de prestador de servicios y el de cliente.
-El prestador de servicios puede crear su cuenta con su información y recibir peticiones de visita por parte de los clientes, mientras que los clientes pueden buscar el prestador de servicios que necesiten para solicitar una visita.
+dev
+# Proyecto Integrador
+
+Sistema de prestación de servicios para el hogar.
+
+## Descripción
+
+Nuestro proyecto consiste en un sistema de prestación de servicios para el hogar con dos roles principales, el de prestador de servicios y el de cliente. El prestador de servicios puede crear su cuenta con su información y recibir peticiones de visita por parte de los clientes, mientras que los clientes pueden buscar el prestador de servicios que necesiten para solicitar una visita.
+
+El objetivo es facilitar la búsqueda y contratación de servicios para el hogar mediante una plataforma centralizada.
+
+---
+
+## Funcionalidades
+
+### Cliente
+
+El cliente podrá:
+
+* Crear una cuenta.
+* Iniciar sesión.
+* Buscar prestadores de servicios.
+* Consultar el perfil de un prestador.
+* Solicitar una visita.
+* Consultar el estado de sus solicitudes.
+
+### Prestador de servicios
+
+El prestador podrá:
+
+* Crear una cuenta.
+* Iniciar sesión.
+* Completar su perfil profesional.
+* Indicar los servicios que ofrece.
+* Recibir solicitudes de visita.
+* Aceptar o rechazar solicitudes.
+* Consultar sus solicitudes.
+
+---
 
 ## Tecnologías
 
