@@ -1,5 +1,3 @@
-
-dev
 # Proyecto Integrador
 
 Sistema de prestación de servicios para el hogar.
