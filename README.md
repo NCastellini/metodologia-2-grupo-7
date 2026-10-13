@@ -254,3 +254,17 @@ Repositorio del proyecto:
 ```text
 https://github.com/NCastellini/metodologia-2-grupo-7.git
 ```
+
+---
+##  Arquitectura y Patrones de Diseño
+
+Para el módulo de gestión, filtrado y búsqueda de prestadores en el backend, se implementó el **Patrón de Diseño Strategy** con el fin de cumplir estrictamente con el **Principio de Abierto/Cerrado (OCP)** de SOLID.
+
+### ¿Cómo funciona?
+* **Interfaz Común (`IEstrategiaOrdenamiento`):** Define el contrato que todas las formas de ordenamiento deben cumplir.
+* **Estrategias Concretas:** Se separaron los algoritmos de ordenamiento en clases independientes y desacopladas:
+  * **OrdenarPorCalificacion:** Prioriza la puntuación del prestador.
+  * **OrdenarPorServicios:** Agrupa y ordena por coincidencia de rubro o servicio.
+  * **OrdenarPorPrecio:** Ordena los prestadores según su tarifa/precio por hora.
+  * **OrdenarPorCercania:** Ordena basándose en la distancia en kilómetros respecto al cliente.
+* **Contexto (`ContextoOrdenamiento`):** Permite cambiar de estrategia de forma dinámica en tiempo de ejecución según el parámetro recibido en las peticiones, evitando el uso de estructuras condicionales rígidas (`if/else` o `switch`) en la lógica de negocio principal (`PrestadorService`).
