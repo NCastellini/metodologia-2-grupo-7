@@ -1,20 +1,23 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { Prestador } from '../models/Prestador';
+import {
+  ContextoOrdenamiento,
+  OrdenarPorCalificacion,
+  OrdenarPorServicios,
+  OrdenarPorPrecio,
+  OrdenarPorCercania,
+  IEstrategiaOrdenamiento
+} from '../strategies/EstrategiaOrdenamiento';
 
 export type CrearPrestadorDto = Omit<Prestador, "id">;
 export type ActualizarPrestadorDto = Partial<Omit<Prestador, "id">>;
 
-// Filtro para los prestadores
+// Filtro ampliado con las opciones de ordenamiento
 export interface FiltroPrestadores {
-    // Coincidencia exacta de servicios
     servicios?: string;
-    // Calificación mínima (inclusive)
     calificacionMinima?: number;
-    // Calificación máxima (inclusive)
     calificacionMaxima?: number;
-    // Campo por el cual ordenar. Si se omite, no se ordena
-    ordenarPor?: "calificacion" | "servicios";
-    // Dirección del orden. Por defecto "desc" para calificación y "asc" para servicios
+    ordenarPor?: "calificacion" | "servicios" | "precio" | "cercania";
     orden?: "asc" | "desc";
 }
 
@@ -25,22 +28,21 @@ const normalizar = (texto: string): string =>
         .toLowerCase()
         .trim();
 
-// CRUD básico para los prestadores
 export class PrestadorService {
     private Prestadores = new Map<string, Prestador>();
 
     crear(datos: CrearPrestadorDto): Prestador {
         this.validarCalificacion(datos.calificacion);
-    this.validarEmailUnico(datos.email);
+        this.validarEmailUnico(datos.email);
         const Prestador: Prestador = { id: randomUUID(), ...datos };
         this.Prestadores.set(Prestador.id, Prestador);
-    return Prestador;
+        return Prestador;
     }
 
     obtenerPorId(id: string): Prestador {
         const Prestador = this.Prestadores.get(id);
         if (!Prestador) {
-        throw new Error(`Prestador con id ${id} no encontrado`);
+            throw new Error(`Prestador con id ${id} no encontrado`);
         }
         return Prestador;
     }
@@ -52,10 +54,10 @@ export class PrestadorService {
     actualizar(id: string, cambios: ActualizarPrestadorDto): Prestador {
         const existente = this.obtenerPorId(id);
         if (cambios.calificacion !== undefined) {
-        this.validarCalificacion(cambios.calificacion);
+            this.validarCalificacion(cambios.calificacion);
         }
         if (cambios.email && cambios.email !== existente.email) {
-        this.validarEmailUnico(cambios.email, id);
+            this.validarEmailUnico(cambios.email, id);
         }
         const actualizado: Prestador = { ...existente, ...cambios, id };
         this.Prestadores.set(id, actualizado);
@@ -64,65 +66,64 @@ export class PrestadorService {
 
     eliminar(id: string): void {
         if (!this.Prestadores.delete(id)) {
-        throw new Error(`Prestador con id ${id} no encontrado`);
+            throw new Error(`Prestador con id ${id} no encontrado`);
         }
     }
 
-    // Filtra y ordena Prestadores por calificación y/o servicios
+    // Método filtrar utilizando el Patrón Strategy
     filtrar(filtro: FiltroPrestadores = {}): Prestador[] {
         const {
-        servicios,
-        calificacionMinima,
-        calificacionMaxima,
-        ordenarPor,
-        orden,
+            servicios,
+            calificacionMinima,
+            calificacionMaxima,
+            ordenarPor,
+            orden,
         } = filtro;
 
-        let resultado = this.listar().filter((p) => {
-        if (servicios && normalizar(p.servicios) !== normalizar(servicios)) {
-        return false;
-        }
-        if (calificacionMinima !== undefined && p.calificacion < calificacionMinima) {
-            return false;
-        }
-        if (calificacionMaxima !== undefined && p.calificacion > calificacionMaxima) {
-            return false;
-        }
-        return true;
+        // 1. Filtrado de datos
+        const resultadoFiltrado = this.listar().filter((p) => {
+            if (servicios && normalizar(p.servicios) !== normalizar(servicios)) {
+                return false;
+            }
+            if (calificacionMinima !== undefined && p.calificacion < calificacionMinima) {
+                return false;
+            }
+            if (calificacionMaxima !== undefined && p.calificacion > calificacionMaxima) {
+                return false;
+            }
+            return true;
         });
 
-        if (ordenarPor === "calificacion") {
-        const factor = (orden ?? "desc") === "asc" ? 1 : -1;
-        resultado = resultado.sort(
-            (a, b) =>
-            factor * (a.calificacion - b.calificacion) ||
-            a.apellido.localeCompare(b.apellido, "es")
-        );
-        } else if (ordenarPor === "servicios") {
-        const factor = (orden ?? "asc") === "asc" ? 1 : -1;
-        resultado = resultado.sort(
-            (a, b) =>
-            factor * a.servicios.localeCompare(b.servicios, "es") ||
-            b.calificacion - a.calificacion
-        );
+        // 2. Mapa de estrategias de ordenamiento (OCP)
+        const mapaEstrategias: Record<string, IEstrategiaOrdenamiento> = {
+            calificacion: new OrdenarPorCalificacion(),
+            servicios: new OrdenarPorServicios(),
+            precio: new OrdenarPorPrecio(),
+            cercania: new OrdenarPorCercania(),
+        };
+
+        const contexto = new ContextoOrdenamiento();
+
+        if (ordenarPor && mapaEstrategias[ordenarPor]) {
+            contexto.establecerEstrategia(mapaEstrategias[ordenarPor]);
+        }
+
+        // 3. Ejecutar y retornar resultado ordenado
+        return contexto.ejecutar(resultadoFiltrado, orden);
     }
 
-        return resultado;
-    }
-
-    // Validators para los campos que los necesitan
     private validarCalificacion(calificacion: number): void {
         if (Number.isNaN(calificacion) || calificacion < 0 || calificacion > 5) {
-        throw new Error("La calificación debe estar entre 0 y 5");
+            throw new Error("La calificación debe estar entre 0 y 5");
         }
     }
 
     private validarEmailUnico(email: string, excluirId?: string): void {
         const duplicado = this.listar().some(
-        (p) => p.id !== excluirId && p.email.toLowerCase() === email.toLowerCase()
+            (p) => p.id !== excluirId && p.email.toLowerCase() === email.toLowerCase()
         );
         if (duplicado) {
-        throw new Error(`Ya existe un Prestador con el email ${email}`);
+            throw new Error(`Ya existe un Prestador con el email ${email}`);
         }
     }
 }
