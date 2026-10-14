@@ -8,5 +8,8 @@ export interface Prestador {
     calificacion: number; //Calificación de 0 a 5 estrellas
     telefono: number;
     email: string;
+    //estos son opcionales porque puede que no todos los prestadores tengan precio o distancia asociada
+    precio?: number;
+    distanciaKm?: number;
 }
 
