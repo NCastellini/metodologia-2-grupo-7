@@ -32,11 +32,22 @@ export class PrestadorService {
     private Prestadores = new Map<string, Prestador>();
 
     crear(datos: CrearPrestadorDto): Prestador {
-        this.validarCalificacion(datos.calificacion);
+        this.validarDatos(datos);
         this.validarEmailUnico(datos.email);
-        const Prestador: Prestador = { id: randomUUID(), ...datos };
-        this.Prestadores.set(Prestador.id, Prestador);
-        return Prestador;
+        const prestador: Prestador = { ...datos, id: randomUUID() };
+        this.Prestadores.set(prestador.id, prestador);
+        return prestador;
+    }
+
+    // Carga los registros del JSON conservando sus IDs estables.
+    cargarInicial(datos: Prestador): Prestador {
+        this.validarDatos(datos);
+        if (this.Prestadores.has(datos.id)) {
+            throw new Error(`Ya existe un prestador con el id ${datos.id}`);
+        }
+        this.validarEmailUnico(datos.email);
+        this.Prestadores.set(datos.id, { ...datos });
+        return datos;
     }
 
     obtenerPorId(id: string): Prestador {
@@ -60,6 +71,7 @@ export class PrestadorService {
             this.validarEmailUnico(cambios.email, id);
         }
         const actualizado: Prestador = { ...existente, ...cambios, id };
+        this.validarDatos(actualizado);
         this.Prestadores.set(id, actualizado);
         return actualizado;
     }
@@ -112,8 +124,15 @@ export class PrestadorService {
         return contexto.ejecutar(resultadoFiltrado, orden);
     }
 
+    private validarDatos(datos: Pick<Prestador, "calificacion" | "email">): void {
+        this.validarCalificacion(datos.calificacion);
+        if (typeof datos.email !== "string" || !datos.email.trim()) {
+            throw new Error("El email es obligatorio");
+        }
+    }
+
     private validarCalificacion(calificacion: number): void {
-        if (Number.isNaN(calificacion) || calificacion < 0 || calificacion > 5) {
+        if (typeof calificacion !== "number" || !Number.isFinite(calificacion) || calificacion < 0 || calificacion > 5) {
             throw new Error("La calificación debe estar entre 0 y 5");
         }
     }

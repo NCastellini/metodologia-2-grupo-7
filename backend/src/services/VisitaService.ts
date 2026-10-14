@@ -29,6 +29,7 @@ export class VisitaService {
     ) {}
 
     crear(datos: CrearVisitaDto): Visita {
+        if (datos.estado !== undefined) this.validarEstado(datos.estado);
         this.validarReferencias(datos.clienteId, datos.prestadorId);
         this.validarFechaYHora(datos.fecha, datos.hora);
         this.validarDisponibilidad(
@@ -83,6 +84,7 @@ export class VisitaService {
     actualizar(id: string, cambios: ActualizarVisitaDto): Visita {
         const existente = this.obtenerPorId(id);
         const actualizado: Visita = { ...existente, ...cambios, id };
+        this.validarEstado(actualizado.estado);
 
         this.validarReferencias(actualizado.clienteId, actualizado.prestadorId);
         this.validarFechaYHora(
@@ -108,6 +110,12 @@ export class VisitaService {
         }
     }
 
+    private validarEstado(estado: EstadoVisita): void {
+        if (!Object.values(EstadoVisita).includes(estado)) {
+            throw new Error("El estado de la visita no es válido");
+        }
+    }
+
     private validarReferencias(clienteId: string, prestadorId: string): void {
         // Lanzan error si no existen
         this.clienteService.obtenerPorId(clienteId);
@@ -118,8 +126,17 @@ export class VisitaService {
         fecha: string,
         hora: string,
     ): void {
-        if (!FORMATO_FECHA.test(fecha) || Number.isNaN(Date.parse(fecha))) {
-        throw new Error("La fecha debe tener formato YYYY-MM-DD y ser válida");
+        if (!FORMATO_FECHA.test(fecha)) {
+            throw new Error("La fecha debe tener formato YYYY-MM-DD y ser válida");
+        }
+        const [anio, mes, dia] = fecha.split("-").map(Number);
+        const fechaReal = new Date(Date.UTC(anio, mes - 1, dia));
+        if (
+            fechaReal.getUTCFullYear() !== anio ||
+            fechaReal.getUTCMonth() !== mes - 1 ||
+            fechaReal.getUTCDate() !== dia
+        ) {
+            throw new Error("La fecha indicada no existe en el calendario");
         }
         if (!FORMATO_HORA.test(hora)) {
         throw new Error("La hora deben tener formato HH:MM (24 hs)");
@@ -139,7 +156,7 @@ export class VisitaService {
             t.prestadorId === prestadorId &&
             t.fecha === fecha &&
             t.estado !== EstadoVisita.cancelado &&
-            t.hora
+            t.hora === hora
         );
         if (hayConflicto) {
         throw new Error(
