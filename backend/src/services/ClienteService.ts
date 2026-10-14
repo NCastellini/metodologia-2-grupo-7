@@ -9,6 +9,7 @@ export class ClienteService {
     private clientes = new Map<string, Cliente>();
 
     crear(datos: CrearClienteDto): Cliente {
+        this.validarDatos(datos);
         this.validarEmailUnico(datos.email);
         const cliente: Cliente = { id: randomUUID(), ...datos };
         this.clientes.set(cliente.id, cliente);
@@ -33,6 +34,7 @@ export class ClienteService {
         this.validarEmailUnico(cambios.email, id);
         }
         const actualizado: Cliente = { ...existente, ...cambios, id };
+        this.validarDatos(actualizado);
         this.clientes.set(id, actualizado);
         return actualizado;
     }
@@ -40,6 +42,21 @@ export class ClienteService {
     eliminar(id: string): void {
         if (!this.clientes.delete(id)) {
         throw new Error(`Cliente con id ${id} no encontrado`);
+        }
+    }
+
+    private validarDatos(datos: Pick<Cliente, "nombre" | "apellido" | "email" | "direccion">): void {
+        if (typeof datos.nombre !== "string" || !datos.nombre.trim()) {
+            throw new Error("El nombre es obligatorio");
+        }
+        if (typeof datos.apellido !== "string" || !datos.apellido.trim()) {
+            throw new Error("El apellido es obligatorio");
+        }
+        if (typeof datos.email !== "string" || !datos.email.trim()) {
+            throw new Error("El email es obligatorio");
+        }
+        if (!datos.direccion || typeof datos.direccion !== "object") {
+            throw new Error("La dirección es obligatoria");
         }
     }
 

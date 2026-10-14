@@ -34,9 +34,11 @@ export class OrdenarPorPrecio implements IEstrategiaOrdenamiento {
   ordenar(prestadores: Prestador[], orden: 'asc' | 'desc' = 'asc'): Prestador[] {
     const factor = orden === 'asc' ? 1 : -1;
     return [...prestadores].sort((a, b) => {
-      const precioA = (a as any).precio ?? 0;
-      const precioB = (b as any).precio ?? 0;
-      return factor * (precioA - precioB);
+      // Los registros sin precio quedan al final, no se inventa un precio de cero.
+      if (a.precio === undefined && b.precio === undefined) return 0;
+      if (a.precio === undefined) return 1;
+      if (b.precio === undefined) return -1;
+      return factor * (a.precio - b.precio);
     });
   }
 }
@@ -46,9 +48,11 @@ export class OrdenarPorCercania implements IEstrategiaOrdenamiento {
   ordenar(prestadores: Prestador[], orden: 'asc' | 'desc' = 'asc'): Prestador[] {
     const factor = orden === 'asc' ? 1 : -1;
     return [...prestadores].sort((a, b) => {
-      const distA = (a as any).distanciaKm ?? 0;
-      const distB = (b as any).distanciaKm ?? 0;
-      return factor * (distA - distB);
+      // Los registros sin distancia quedan al final.
+      if (a.distanciaKm === undefined && b.distanciaKm === undefined) return 0;
+      if (a.distanciaKm === undefined) return 1;
+      if (b.distanciaKm === undefined) return -1;
+      return factor * (a.distanciaKm - b.distanciaKm);
     });
   }
 }
