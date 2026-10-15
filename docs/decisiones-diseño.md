@@ -1,154 +1,42 @@
-# Guía de Patrones de Diseño y Arquitectura
+# Decisiones de diseño — Grupo 7 · Metodología de Sistemas II · Taller II
 
-Este documento detalla la elección, justificación, ubicación dentro del código y descarte de los patrones de diseño y principios arquitectónicos aplicados en el proyecto del grupo 7 de Metodología de Sistemas II.
+Criterio del grupo: un patrón se aplica solo si resuelve un problema presente en el código o inminente en la próxima etapa. Conocer un patrón no alcanza para usarlo. Rutas relativas a `backend/src/`. Estado: **aplicado** (ya está en el código) o **previsto** (se incorpora con la BD o las APIs).
 
----
+## 1. Código analizado
 
-## 1. Principios SOLID y Arquitectura (Reaf, CC y SRP)
+| Decisión | Estado | Archivos |
+|----------|--------|----------|
+| Strategy (ordenar prestadores) | Aplicado | `strategies/EstrategiaOrdenamiento.ts`, `services/PrestadorService.ts` (`filtrar`), `controllers/prestadorController.ts` (`listarPrestadores`) |
+| Singleton (instancia única) | Aplicado | `db/conexion.ts` (un único `Pool` de PostgreSQL, aún sin consumidores) y `serviceContainer.ts` (instancia única de cada servicio) |
+| SRP (capas separadas) | Aplicado | `routes/`, `controllers/`, `services/`, `models/`, `db/`, `strategies/`; `index.ts` solo configura Express y monta rutas |
+| Facade (acceso a la BD) | Previsto | A crear al migrar los servicios de memoria a PostgreSQL |
+| Adapter (geolocalización / MercadoPago) | Previsto | A crear al integrar cada API (hoy no hay dependencias externas) |
 
-### Principio de Responsabilidad Única (SRP - Single Responsibility Principle)
-* **¿Por qué lo elegimos?** Para evitar tener un archivo `index.js` (o punto de entrada) con demasiada responsabilidad, lo que dificultaría las pruebas, el mantenimiento y la escalabilidad del sistema.
-* **¿Dónde lo ingresamos?** 
-  * Las **rutas** están separadas en archivos específicos (ej. `routes/prestadores.routes.js`).
-  * Los **controladores** concentran exclusivamente la lógica de negocio y la interacción con los servicios.
-  * La **capa de persistencia/base de datos** está aislada en modelos o repositorios dedicados.
-* **Código de Ejemplo:**
-  ```javascript
-  // routes/prestadores.routes.js
-  const { Router } = require('express');
-  const { obtenerPrestadores } = require('../controllers/prestadores.controller');
-  const router = Router();
+## 2. Diagnóstico y 4. Decisión: por qué estos patrones
 
-  router.get('/', obtenerPrestadores);
+- **Strategy:** ordenar por precio, cercanía, calificación y rubro son 4 variantes de una misma operación, con reglas propias (desempates, datos faltantes, asc/desc). Sin el patrón, `filtrar()` mezclaría filtrado con 4 algoritmos y cada criterio nuevo obligaría a modificarlo (Clase 6). **Se mantiene.** Smells detectados (Clase 7) y refactorings propuestos: duplicación del cálculo del factor de orden y de la regla "sin dato al final" (Extract Method); mapa de estrategias creado en cada llamada y tipado como `string` (moverlo a nivel de módulo con un tipo `CriterioOrden`); lista de criterios y rango de calificación 0–5 validados en el controlador y también en el servicio (conviene una sola fuente de verdad).
+- **Singleton:** la conexión a PostgreSQL debe ser una sola para no abrir conexiones de más, y los servicios guardan el estado en memoria, así que una segunda instancia duplicaría los datos (Clase 4). Se resuelve con instancias exportadas desde un módulo, que Node cachea, sin la ceremonia del Singleton GoF. Costo: estado global compartido. Hoy `db/conexion.ts` todavía no es usado por ningún servicio.
+- **SRP:** la ruta define el endpoint, el controlador traduce HTTP y valida la entrada, el servicio concentra las reglas de negocio y la conexión vive aparte (Clase 7). Límite actual: `PrestadorService` mezcla CRUD, validación y filtrado; se acepta mientras la persistencia sea en memoria y se separa en un repositorio al llegar la BD.
+- **Facade (previsto):** servicios y controladores no deberían conocer `pg` ni armar consultas. Una fachada de datos les daría una interfaz simple (Clase 5). Hoy no corresponde: no hay subsistema que ocultar, y envolver un `Map` solo renombraría métodos.
+- **Adapter (previsto):** para geolocalización y pagos se definirá un contrato propio y un adaptador por proveedor, de modo que cambiar de proveedor toque un solo lugar (Clase 5). Hoy no se implementa porque no hay API que adaptar.
 
-  module.exports = router;
-  ```
+## 3. Alternativas consideradas
 
----
+- **Strategy:** `switch` dentro de `filtrar()` (crece con cada criterio) u objeto de funciones comparadoras (pierde interfaz común y es poco extensible con desempates y contexto, como la ubicación del cliente).
+- **Singleton:** Singleton GoF (más ceremonia y acoplamiento) o `new` en cada consumidor (rompe la consistencia del estado).
+- **Facade / Adapter:** llamar directo a `pg` o al SDK del proveedor; descartado porque propaga detalles externos por todo el sistema.
 
-## 2. Patrones Creacionales: Singleton
+## 5. Evidencia y trade-offs
 
-### Patrón Singleton
-* **¿Por qué lo elegimos?** Para garantizar que exista una única instancia de conexión a la base de datos en toda la aplicación, evitando aperturas y cierres innecesarios de conexiones y optimizando recursos.
-* **¿Dónde lo ingresamos?** En el módulo de configuración o conexión a la base de datos (ej. `config/database.js` o `db/connection.js`).
-* **Código de Ejemplo:**
-  ```javascript
-  // config/database.js
-  const mongoose = require('mongoose');
+- **Beneficios:** menor acoplamiento, criterios de orden probables por separado, cambio de proveedor localizado y capas con una sola razón de cambio.
+- **Costos:** más clases y capas para 4 comparadores; estado global en servicios y conexión; Facade y Adapter agregan indirección que solo se paga cuando existan BD y APIs reales.
+- **Riesgo abierto:** con geolocalización real, "cercanía" dependerá de la ubicación del cliente y habrá que ampliar la interfaz de Strategy.
+- **Evidencia:** archivos de la sección 1 
 
-  class DatabaseConnection {
-    constructor() {
-      if (!DatabaseConnection.instance) {
-        this.connect();
-        DatabaseConnection.instance = this;
-      }
-      return DatabaseConnection.instance;
-    }
+## Por qué no otros patrones
 
-    async connect() {
-      try {
-        await mongoose.connect(process.env.DB_URI);
-        console.log("Conexión a la base de datos establecida (Singleton)");
-      } catch (error) {
-        console.error("Error de conexión a la BD:", error);
-      }
-    }
-  }
-
-  const instance = new DatabaseConnection();
-  Object.freeze(instance);
-
-  module.exports = instance;
-  ```
-
----
-
-## 3. Patrones Estructurales: Facade y Adapter
-
-### A. Patrón Facade (Fachada)
-* **¿Por qué lo elegimos?** Para simplificar la complejidad de las consultas o llamadas directas a la base de datos o múltiples servicios, proveyendo una interfaz unificada y limpia para los controladores.
-* **¿Dónde lo ingresamos?** En una clase de servicio o fachada (ej. `services/PrestadorFacade.js`).
-* **Código de Ejemplo:**
-  ```javascript
-  // services/PrestadorFacade.js
-  const PrestadorModel = require('../models/prestador.model');
-
-  class PrestadorFacade {
-    async buscarYFiltrar(criterios) {
-      // Simplifica la complejidad de armar queries compuestas en Mongoose/SQL
-      return await PrestadorModel.find(criterios);
-    }
-  }
-
-  module.exports = new PrestadorFacade();
-  ```
-
-### B. Patrón Adapter (Adaptador)
-* **¿Por qué lo elegimos?** Para desacoplar nuestro sistema de APIs externas (como geolocalización o pasarelas de pago tipo MercadoPago), permitiendo cambiar de proveedor en el futuro sin modificar la lógica interna de la aplicación.
-* **¿Dónde lo ingresamos?** En la capa de adaptadores externos (ej. `adapters/MercadoPagoAdapter.js`).
-* **Código de Ejemplo:**
-  ```javascript
-  // adapters/MercadoPagoAdapter.js
-  class MercadoPagoAdapter {
-    async crearPreferenciaPago(datosPago) {
-      // Aquí se llamaría al SDK real de MercadoPago
-      // Si mañana cambiamos a Stripe, solo modificamos este adaptador.
-      return { idPreferencia: "mp_pref_12345", init_point: "https://mercadopago.com/checkout..." };
-    }
-  }
-
-  module.exports = MercadoPagoAdapter;
-  ```
-
----
-
-## 4. Patrones de Comportamiento: Strategy
-
-### Patrón Strategy
-* **¿Por qué lo elegimos?** Para manejar dinámicamente las distintas formas de ordenar y buscar a los prestadores (por precio, por cercanía o por valoración) sin saturar el controlador con estructuras `if/else` o `switch`.
-* **¿Dónde lo ingresamos?** En la lógica de búsqueda y ordenamiento de prestadores (ej. `strategies/OrdenamientoContext.js`).
-* **Código de Ejemplo:**
-  ```javascript
-  // strategies/ordenamiento.strategy.js
-  class OrdenPorPrecio {
-    ordenar(prestadores) {
-      return prestadores.sort((a, b) => a.precio - b.precio);
-    }
-  }
-
-  class OrdenPorCercania {
-    ordenar(prestadores) {
-      return prestadores.sort((a, b) => a.distancia - b.distancia);
-    }
-  }
-
-  class OrdenPorValoracion {
-    ordenar(prestadores) {
-      return prestadores.sort((a, b) => b.valoracion - a.valoracion);
-    }
-  }
-
-  class OrdenamientoContext {
-    constructor(strategy) {
-      this.strategy = strategy;
-    }
-
-    setStrategy(strategy) {
-      this.strategy = strategy;
-    }
-
-    ejecutarOrden(prestadores) {
-      return this.strategy.ordenar(prestadores);
-    }
-  }
-
-  module.exports = { OrdenPorPrecio, OrdenPorCercania, OrdenPorValoracion, OrdenamientoContext };
-  ```
-
----
-
-## 5. Justificación del Descarte de Otros Patrones
-
-* **Prototype / Builder (Creacionales):** Fueron descartados porque la creación de entidades en nuestro dominio (como prestadores o usuarios) no requiere una complejidad de construcción por pasos tan elevada ni clonación masiva de objetos en memoria.
-* **Decorator / Proxy (Estructurales):** Se evaluaron para control de acceso, pero se prefirió delegar esa responsabilidad en middlewares nativos de Express (como autenticación por JWT) para mantener el código más liviano y estándar.
-* **Observer / State (Comportamiento):** Se descartaron ya que el flujo de la aplicación es principalmente síncrono basado en peticiones HTTP (REST API), sin requerir eventos complejos en tiempo real o máquinas de estados complejas para las entidades principales en esta etapa del proyecto.
+- **Factory:** la creación es directa (`new ClienteService()`) y la única selección de variantes ya está en el mapa de estrategias.
+- **Builder:** `Prestador`, `Cliente` y `Visita` son objetos de pocos campos; `Omit` y spread alcanzan, sin construcción por pasos.
+- **Decorator / Proxy:** no hay comportamientos combinables (logging, reintentos); el control de acceso se resolvería con middlewares de Express.
+- **Observer:** hoy cambiar el estado de una `Visita` no dispara reacciones. Sería el primer candidato si aparecen notificaciones.
+- **Command / State:** no hay acciones para guardar o deshacer, ni máquinas de estado complejas en esta etapa.
