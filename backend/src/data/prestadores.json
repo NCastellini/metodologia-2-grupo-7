@@ -1,0 +1,452 @@
+[
+  {
+    "id": "1",
+    "nombre": "Elena",
+    "apellido": "Sandoval",
+    "servicios": "Gasista",
+    "calificacion": 1.5,
+    "telefono": 1505626019,
+    "email": "prestador1@mail.com"
+  },
+  {
+    "id": "2",
+    "nombre": "Federico",
+    "apellido": "Domínguez",
+    "servicios": "Mudanzas",
+    "calificacion": 4,
+    "telefono": 1533156079,
+    "email": "prestador2@mail.com"
+  },
+  {
+    "id": "3",
+    "nombre": "Gastón",
+    "apellido": "Tejeda",
+    "servicios": "Electricidad",
+    "calificacion": 3,
+    "telefono": 1591240967,
+    "email": "prestador3@mail.com"
+  },
+  {
+    "id": "4",
+    "nombre": "Maximiliano",
+    "apellido": "Coronel",
+    "servicios": "Instalación de Pisos",
+    "calificacion": 2,
+    "telefono": 1569072120,
+    "email": "prestador4@mail.com"
+  },
+  {
+    "id": "5",
+    "nombre": "Hugo",
+    "apellido": "Ibarra",
+    "servicios": "Mudanzas",
+    "calificacion": 1,
+    "telefono": 1544178109,
+    "email": "prestador5@mail.com"
+  },
+  {
+    "id": "6",
+    "nombre": "Carolina",
+    "apellido": "Iglesias",
+    "servicios": "Jardinería",
+    "calificacion": 5,
+    "telefono": 1584787886,
+    "email": "prestador6@mail.com"
+  },
+  {
+    "id": "7",
+    "nombre": "Javier",
+    "apellido": "Carrizo",
+    "servicios": "Carpintería",
+    "calificacion": 1.5,
+    "telefono": 1570230398,
+    "email": "prestador7@mail.com"
+  },
+  {
+    "id": "8",
+    "nombre": "Florencia",
+    "apellido": "Morales",
+    "servicios": "Mudanzas",
+    "calificacion": 1.5,
+    "telefono": 1574183035,
+    "email": "prestador8@mail.com"
+  },
+  {
+    "id": "9",
+    "nombre": "Federico",
+    "apellido": "Domínguez",
+    "servicios": "Reparación de Electrodomésticos",
+    "calificacion": 0.5,
+    "telefono": 1594504648,
+    "email": "prestador9@mail.com"
+  },
+  {
+    "id": "10",
+    "nombre": "Adrián",
+    "apellido": "Cabrera",
+    "servicios": "Reparación de Electrodomésticos",
+    "calificacion": 2.5,
+    "telefono": 1533176271,
+    "email": "prestador10@mail.com"
+  },
+  {
+    "id": "11",
+    "nombre": "Mercedes",
+    "apellido": "Quiroga",
+    "servicios": "Pintura",
+    "calificacion": 0.5,
+    "telefono": 1576436799,
+    "email": "prestador11@mail.com"
+  },
+  {
+    "id": "12",
+    "nombre": "Federico",
+    "apellido": "Domínguez",
+    "servicios": "Plomería",
+    "calificacion": 2,
+    "telefono": 1534589874,
+    "email": "prestador12@mail.com"
+  },
+  {
+    "id": "13",
+    "nombre": "Mercedes",
+    "apellido": "Quiroga",
+    "servicios": "Plomería",
+    "calificacion": 0.5,
+    "telefono": 1583779628,
+    "email": "prestador13@mail.com"
+  },
+  {
+    "id": "14",
+    "nombre": "Gabriela",
+    "apellido": "Duarte",
+    "servicios": "Gasista",
+    "calificacion": 3.5,
+    "telefono": 1534753549,
+    "email": "prestador14@mail.com"
+  },
+  {
+    "id": "15",
+    "nombre": "Ramón",
+    "apellido": "Escobar",
+    "servicios": "Cerrajería",
+    "calificacion": 2.5,
+    "telefono": 1562911285,
+    "email": "prestador15@mail.com"
+  },
+  {
+    "id": "16",
+    "nombre": "Cristian",
+    "apellido": "Villalba",
+    "servicios": "Limpieza",
+    "calificacion": 2.5,
+    "telefono": 1566185173,
+    "email": "prestador16@mail.com"
+  },
+  {
+    "id": "17",
+    "nombre": "Rodrigo",
+    "apellido": "Silva",
+    "servicios": "Jardinería",
+    "calificacion": 0,
+    "telefono": 1578571743,
+    "email": "prestador17@mail.com"
+  },
+  {
+    "id": "18",
+    "nombre": "Germán",
+    "apellido": "Espinoza",
+    "servicios": "Limpieza",
+    "calificacion": 3.5,
+    "telefono": 1567301003,
+    "email": "prestador18@mail.com"
+  },
+  {
+    "id": "19",
+    "nombre": "Esteban",
+    "apellido": "Navarro",
+    "servicios": "Plomería",
+    "calificacion": 2.5,
+    "telefono": 1588942464,
+    "email": "prestador19@mail.com"
+  },
+  {
+    "id": "20",
+    "nombre": "Valeria",
+    "apellido": "Acosta",
+    "servicios": "Albañilería",
+    "calificacion": 5,
+    "telefono": 1504539133,
+    "email": "prestador20@mail.com"
+  },
+  {
+    "id": "21",
+    "nombre": "Gabriela",
+    "apellido": "Duarte",
+    "servicios": "Limpieza",
+    "calificacion": 5,
+    "telefono": 1579810573,
+    "email": "prestador21@mail.com"
+  },
+  {
+    "id": "22",
+    "nombre": "Stella Maris",
+    "apellido": "Ávila",
+    "servicios": "Techos y Cubiertas",
+    "calificacion": 2,
+    "telefono": 1559416256,
+    "email": "prestador22@mail.com"
+  },
+  {
+    "id": "23",
+    "nombre": "Rodrigo",
+    "apellido": "Silva",
+    "servicios": "Decoración de Interiores",
+    "calificacion": 2,
+    "telefono": 1546350154,
+    "email": "prestador23@mail.com"
+  },
+  {
+    "id": "24",
+    "nombre": "Pablo",
+    "apellido": "Aguirre",
+    "servicios": "Fumigación",
+    "calificacion": 0.5,
+    "telefono": 1582282908,
+    "email": "prestador24@mail.com"
+  },
+  {
+    "id": "25",
+    "nombre": "Alejandro",
+    "apellido": "Vega",
+    "servicios": "Limpieza",
+    "calificacion": 5,
+    "telefono": 1571226456,
+    "email": "prestador25@mail.com"
+  },
+  {
+    "id": "26",
+    "nombre": "Micaela",
+    "apellido": "Benítez",
+    "servicios": "Decoración de Interiores",
+    "calificacion": 4.5,
+    "telefono": 1556780526,
+    "email": "prestador26@mail.com"
+  },
+  {
+    "id": "27",
+    "nombre": "Daniel",
+    "apellido": "Heredia",
+    "servicios": "Mudanzas",
+    "calificacion": 5,
+    "telefono": 1538780419,
+    "email": "prestador27@mail.com"
+  },
+  {
+    "id": "28",
+    "nombre": "Jimena",
+    "apellido": "Calderón",
+    "servicios": "Mudanzas",
+    "calificacion": 1,
+    "telefono": 1582600007,
+    "email": "prestador28@mail.com"
+  },
+  {
+    "id": "29",
+    "nombre": "Germán",
+    "apellido": "Espinoza",
+    "servicios": "Reparación de Electrodomésticos",
+    "calificacion": 0.5,
+    "telefono": 1542875672,
+    "email": "prestador29@mail.com"
+  },
+  {
+    "id": "30",
+    "nombre": "Nicolás",
+    "apellido": "Jiménez",
+    "servicios": "Soldadura",
+    "calificacion": 4,
+    "telefono": 1554361516,
+    "email": "prestador30@mail.com"
+  },
+  {
+    "id": "31",
+    "nombre": "Gabriela",
+    "apellido": "Duarte",
+    "servicios": "Jardinería",
+    "calificacion": 0,
+    "telefono": 1559742045,
+    "email": "prestador31@mail.com"
+  },
+  {
+    "id": "32",
+    "nombre": "Damián",
+    "apellido": "Valdés",
+    "servicios": "Climatización",
+    "calificacion": 2.5,
+    "telefono": 1545975766,
+    "email": "prestador32@mail.com"
+  },
+  {
+    "id": "33",
+    "nombre": "Patricia",
+    "apellido": "Montes",
+    "servicios": "Plomería",
+    "calificacion": 3,
+    "telefono": 1555432809,
+    "email": "prestador33@mail.com"
+  },
+  {
+    "id": "34",
+    "nombre": "Germán",
+    "apellido": "Espinoza",
+    "servicios": "Soldadura",
+    "calificacion": 1.5,
+    "telefono": 1520870109,
+    "email": "prestador34@mail.com"
+  },
+  {
+    "id": "35",
+    "nombre": "Adrián",
+    "apellido": "Cabrera",
+    "servicios": "Cerrajería",
+    "calificacion": 3,
+    "telefono": 1509777082,
+    "email": "prestador35@mail.com"
+  },
+  {
+    "id": "36",
+    "nombre": "Mariela",
+    "apellido": "Gutiérrez",
+    "servicios": "Jardinería",
+    "calificacion": 2,
+    "telefono": 1579942590,
+    "email": "prestador36@mail.com"
+  },
+  {
+    "id": "37",
+    "nombre": "Hernán",
+    "apellido": "Vargas",
+    "servicios": "Limpieza",
+    "calificacion": 5,
+    "telefono": 1534940038,
+    "email": "prestador37@mail.com"
+  },
+  {
+    "id": "38",
+    "nombre": "Tamara",
+    "apellido": "Lorca",
+    "servicios": "Soldadura",
+    "calificacion": 4.5,
+    "telefono": 1559132530,
+    "email": "prestador38@mail.com"
+  },
+  {
+    "id": "39",
+    "nombre": "Tamara",
+    "apellido": "Lorca",
+    "servicios": "Albañilería",
+    "calificacion": 1,
+    "telefono": 1529549623,
+    "email": "prestador39@mail.com"
+  },
+  {
+    "id": "40",
+    "nombre": "Juliana",
+    "apellido": "Pereyra",
+    "servicios": "Limpieza",
+    "calificacion": 4,
+    "telefono": 1596902515,
+    "email": "prestador40@mail.com"
+  },
+  {
+    "id": "41",
+    "nombre": "Natalia",
+    "apellido": "Cáceres",
+    "servicios": "Herrería",
+    "calificacion": 2.5,
+    "telefono": 1546580816,
+    "email": "prestador41@mail.com"
+  },
+  {
+    "id": "42",
+    "nombre": "Camila",
+    "apellido": "Herrera",
+    "servicios": "Techos y Cubiertas",
+    "calificacion": 0.5,
+    "telefono": 1540823238,
+    "email": "prestador42@mail.com"
+  },
+  {
+    "id": "43",
+    "nombre": "Viviana",
+    "apellido": "Soto",
+    "servicios": "Cerrajería",
+    "calificacion": 4.5,
+    "telefono": 1587052411,
+    "email": "prestador43@mail.com"
+  },
+  {
+    "id": "44",
+    "nombre": "Camila",
+    "apellido": "Herrera",
+    "servicios": "Climatización",
+    "calificacion": 0.5,
+    "telefono": 1511676799,
+    "email": "prestador44@mail.com"
+  },
+  {
+    "id": "45",
+    "nombre": "Ernesto",
+    "apellido": "Quiroz",
+    "servicios": "Techos y Cubiertas",
+    "calificacion": 5,
+    "telefono": 1554007792,
+    "email": "prestador45@mail.com"
+  },
+  {
+    "id": "46",
+    "nombre": "Osvaldo",
+    "apellido": "Peralta",
+    "servicios": "Impermeabilización",
+    "calificacion": 0.5,
+    "telefono": 1549154226,
+    "email": "prestador46@mail.com"
+  },
+  {
+    "id": "47",
+    "nombre": "Claudia",
+    "apellido": "Bravo",
+    "servicios": "Impermeabilización",
+    "calificacion": 4.5,
+    "telefono": 1578012405,
+    "email": "prestador47@mail.com"
+  },
+  {
+    "id": "48",
+    "nombre": "Hernán",
+    "apellido": "Vargas",
+    "servicios": "Decoración de Interiores",
+    "calificacion": 0.5,
+    "telefono": 1549405594,
+    "email": "prestador48@mail.com"
+  },
+  {
+    "id": "49",
+    "nombre": "Laura",
+    "apellido": "Gómez",
+    "servicios": "Gasista",
+    "calificacion": 2.5,
+    "telefono": 1597256918,
+    "email": "prestador49@mail.com"
+  },
+  {
+    "id": "50",
+    "nombre": "Laura",
+    "apellido": "Gómez",
+    "servicios": "Soldadura",
+    "calificacion": 1.5,
+    "telefono": 1580208520,
+    "email": "prestador50@mail.com"
+  }
+]

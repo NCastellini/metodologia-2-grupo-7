@@ -225,14 +225,14 @@ El proyecto se encuentra en la etapa inicial de configuración.
 * [x] Configuración inicial de PostgreSQL.
 * [x] Configuración de variables de entorno.
 * [x] Configuración del repositorio.
+* [x] Implementación del registro e inicio de sesión.
+* [x] Implementación de perfiles.
+* [x] Implementación de búsqueda de prestadores.
+* [x] Implementación de solicitudes de visita.
 
 ### Próximos pasos
 
 * [ ] Diseño de la base de datos.
-* [ ] Implementación del registro e inicio de sesión.
-* [ ] Implementación de perfiles.
-* [ ] Implementación de búsqueda de prestadores.
-* [ ] Implementación de solicitudes de visita.
 * [ ] Gestión de solicitudes por parte del prestador.
 * [ ] Integración frontend/backend.
 * [ ] Pruebas del sistema.
