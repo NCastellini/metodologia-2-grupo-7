@@ -52,9 +52,9 @@ El prestador podrá:
 * Express
 * TypeScript
 
-### Base de datos
+### Almacenamiento
 
-* PostgreSQL
+* Datos en memoria mediante `Map`.
 
 ---
 
@@ -64,7 +64,6 @@ Para ejecutar el proyecto se necesita tener instalado:
 
 * Node.js
 * npm
-* PostgreSQL
 * Git
 
 ---
@@ -85,11 +84,6 @@ proyecto-integrador/
 │   ├── package.json
 │   ├── package-lock.json
 │   └── ...
-│
-├── database/              # Base de datos
-│   ├── migrations/
-│   ├── seeds/
-│   └── README.md
 │
 ├── .env.example           # Variables de entorno requeridas
 ├── .gitignore
@@ -138,29 +132,19 @@ Copy-Item .env.example .env
 cp .env.example .env
 ```
 
-Completar las variables necesarias según la configuración local de PostgreSQL.
+Configurar `PORT` si se desea cambiar el puerto del backend. No se requieren credenciales de base de datos.
 
 **El archivo `.env` no debe subirse al repositorio.**
 
 ---
 
-## Base de datos
+## Almacenamiento en memoria
 
-El proyecto utiliza PostgreSQL.
+Los servicios guardan clientes, prestadores y visitas en memoria mediante `Map`. No se utiliza PostgreSQL ni se necesita instalar un gestor de base de datos.
 
-Cada integrante debe tener una instancia local de PostgreSQL disponible.
+Al reiniciar el backend se pierden los cambios, clientes y visitas creados durante la ejecución. Los prestadores iniciales se vuelven a cargar desde `backend/src/data/prestadores.json`; ese archivo no guarda las modificaciones realizadas por la API.
 
-La configuración de conexión se encuentra definida mediante variables de entorno.
-
-Las migraciones y seeds del proyecto se almacenarán en:
-
-```text
-database/
-├── migrations/
-└── seeds/
-```
-
-La estructura y los pasos necesarios para preparar la base de datos se documentarán en `database/README.md`.
+Los datos no se comparten entre distintos procesos del backend.
 
 ---
 
@@ -201,12 +185,6 @@ Ejemplo:
 ```env
 PORT=3000
 
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_NAME=proyecto_integrador
-DATABASE_USER=postgres
-DATABASE_PASSWORD=password
-
 JWT_SECRET=super_secret
 ```
 
@@ -222,7 +200,7 @@ El proyecto se encuentra en la etapa inicial de configuración.
 
 * [x] Configuración inicial del frontend.
 * [x] Configuración inicial del backend.
-* [x] Configuración inicial de PostgreSQL.
+* [x] Almacenamiento en memoria.
 * [x] Configuración de variables de entorno.
 * [x] Configuración del repositorio.
 * [x] Implementación del registro e inicio de sesión.
@@ -232,7 +210,6 @@ El proyecto se encuentra en la etapa inicial de configuración.
 
 ### Próximos pasos
 
-* [ ] Diseño de la base de datos.
 * [ ] Gestión de solicitudes por parte del prestador.
 * [ ] Integración frontend/backend.
 * [ ] Pruebas del sistema.
