@@ -2,11 +2,7 @@ import type { Request, Response } from "express";
 import { prestadorService } from "../serviceContainer";
 import type { FiltroPrestadores } from "../services/PrestadorService";
 
-function responderError(res: Response, error: unknown): void {
-  const mensaje = error instanceof Error ? error.message : "Error inesperado";
-  const noEncontrado = mensaje.includes("no encontrado");
-  res.status(noEncontrado ? 404 : 400).json({ mensaje });
-}
+import { responderError } from "./responderError";
 
 function leerNumero(query: unknown, nombre: string): number | undefined {
   if (query === undefined) return undefined;

@@ -3,11 +3,7 @@ import { visitaService } from "../serviceContainer";
 import type { FiltroVisitas } from "../services/VisitaService";
 import { EstadoVisita } from "../models/Visita";
 
-function responderError(res: Response, error: unknown): void {
-  const mensaje = error instanceof Error ? error.message : "Error inesperado";
-  const noEncontrado = mensaje.includes("no encontrado");
-  res.status(noEncontrado ? 404 : 400).json({ mensaje });
-}
+import { responderError } from "./responderError";
 
 export function listarVisitas(req: Request, res: Response): void {
   const estado = req.query.estado;
