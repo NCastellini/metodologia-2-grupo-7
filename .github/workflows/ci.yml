@@ -1,0 +1,59 @@
+name: Calidad del proyecto
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  calidad:
+    name: Calidad - ${{ matrix.proyecto }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        proyecto: [backend, frontend]
+    defaults:
+      run:
+        working-directory: ${{ matrix.proyecto }}
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ${{ matrix.proyecto }}/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Analizar el código
+        run: npm run lint -- --max-warnings=0
+
+      - name: Detectar tests del backend
+        if: matrix.proyecto == 'backend'
+        id: tests
+        run: |
+          node -e "const fs = require('node:fs'); const p = require('./package.json'); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'disponibles=' + Boolean(p.scripts?.test) + '\n');"
+
+      - name: Ejecutar tests del backend
+        if: matrix.proyecto == 'backend' && steps.tests.outputs.disponibles == 'true'
+        run: npm test
+
+      - name: Informar pruebas pendientes
+        if: matrix.proyecto == 'backend' && steps.tests.outputs.disponibles != 'true'
+        run: |
+          echo "::warning::El backend todavía no tiene script test. Las pruebas automatizadas están pendientes."
+          echo "### Pruebas pendientes" >> "$GITHUB_STEP_SUMMARY"
+          echo "No se ejecutaron tests: falta el script npm test del backend. Una ejecución verde no acredita pruebas de comportamiento." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Compilar y verificar tipos
+        run: npm run build
