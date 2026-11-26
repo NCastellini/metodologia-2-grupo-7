@@ -50,13 +50,15 @@ npm --prefix frontend ci
 npm --prefix backend run lint
 npm --prefix backend run typecheck
 npm --prefix frontend run lint -- --max-warnings=0
+npm --prefix backend test
+npm --prefix frontend test
 npm --prefix backend run build
 npm --prefix frontend run build
 ```
 
 - **ESLint:** analiza patrones problemáticos con las reglas recomendadas de JavaScript y TypeScript. En frontend se incluyen también reglas de React. Se exige cero advertencias.
 - **TypeScript:** comprueba contratos estáticos; `typecheck` no genera archivos. La compilación de ambas aplicaciones también verifica tipos.
-- **Tests:** deben verificar comportamientos reales; lint y tipos no los reemplazan.
+- **Tests:** Vitest verifica la búsqueda y el ordenamiento en el backend, la construcción de consultas en frontend y el comportamiento visible de la interfaz con un backend simulado; lint y tipos no los reemplazan. Los casos, decisiones y límites están en [testing.md](testing.md).
 
 ## Integración continua con GitHub Actions
 
@@ -64,17 +66,9 @@ Archivo: `.github/workflows/ci.yml`.
 
 El workflow se ejecuta con pushes a `main` y `dev`, pull requests cuyo destino sea una de esas ramas, o manualmente desde **Actions**.
 
-Usa dos jobs de una matriz, uno para backend y otro para frontend, con Ubuntu y Node.js 22. Cada job obtiene el código, instala dependencias con `npm ci`, ejecuta lint y compila. En backend también ejecuta `npm test` cuando existe ese script.
+Usa dos jobs de una matriz, uno para backend y otro para frontend, con Ubuntu y Node.js 22. Cada job obtiene el código, instala dependencias con `npm ci`, ejecuta lint, **ejecuta obligatoriamente `npm test`** y compila. La ausencia del script de tests o un test fallido hace fallar el job.
 
 Si falla un comando, falla el job. El workflow no impide por sí mismo hacer merge: para exigir sus resultados deben configurarse comprobaciones obligatorias en las reglas de la rama de GitHub.
-
-### Integración de las pruebas
-
-Actualmente el backend no tiene un script `test`. Por eso el workflow publica una advertencia y un resumen de pruebas pendientes en lugar de simular una ejecución exitosa de tests.
-
-El responsable de pruebas debe agregar el framework, los casos y el script `test`, que debe ejecutar la suite una sola vez, sin modo watch, y devolver un código de error si una prueba falla.
-
-Al integrarse ese script, CI lo ejecutará automáticamente. Después debe reemplazarse la detección temporal por un paso obligatorio `npm test`, para que eliminar el script accidentalmente también haga fallar CI. **Una ejecución verde sin tests no acredita comportamientos probados.**
 
 ### Evidencia y resultados
 
