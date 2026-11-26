@@ -1,0 +1,45 @@
+name: Calidad del proyecto
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  calidad:
+    name: Calidad - ${{ matrix.proyecto }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        proyecto: [backend, frontend]
+    defaults:
+      run:
+        working-directory: ${{ matrix.proyecto }}
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ${{ matrix.proyecto }}/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Analizar el código
+        run: npm run lint -- --max-warnings=0
+
+      - name: Ejecutar tests
+        run: npm test
+
+      - name: Compilar y verificar tipos
+        run: npm run build
