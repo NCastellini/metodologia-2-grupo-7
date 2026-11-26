@@ -1,6 +1,6 @@
-# Decisiones de diseño — Grupo 7 · Metodología de Sistemas II · Taller II
+# Decisiones de diseño
 
-Criterio del grupo: un patrón se aplica solo si resuelve un problema presente en el código o inminente en la próxima etapa. Conocer un patrón no alcanza para usarlo. Rutas relativas a `backend/src/`. Estado: **aplicado** (ya está en el código) o **previsto** (se incorpora con la BD o las APIs).
+Criterio del grupo: un patrón se aplica solo si resuelve un problema presente en el código o inminente en la próxima etapa. Conocer un patrón no alcanza para usarlo. Rutas relativas a `backend/src/`. Estado: **aplicado** (ya está en el código), **previsto** (para futuras APIs) o **fuera del alcance**.
 
 ## 1. Código analizado
 

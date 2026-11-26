@@ -8,7 +8,7 @@ npm test                # se corre por separado en el backend y en el frontend
 npm run test:coverage   # agrega reporte de cobertura
 ```
 
-Se usa **Vitest** con una sola configuración (`vitest.config.ts`) dividida en dos proyectos:
+Se usa **Vitest** con una configuración independiente en `backend/vitest.config.ts` y otra en `frontend/vitest.config.ts`:
 
 | Proyecto   | Entorno | Archivos                         | Por qué ese entorno |
 |------------|---------|----------------------------------|---------------------|
@@ -25,10 +25,7 @@ El filtrado y el ordenamiento **no** se hacen en el navegador: el frontend arma 
 2. **Contrato frontend → backend:** `prestadoresApi.ts` arma bien la consulta y traduce errores.
 3. **Comportamiento visible:** `App` y `ListaPrestadores` muestran lo correcto (lista, "Sin precio", "sin resultados").
 
-Los datos de prueba (`src-backend/tests/fixtures.ts`) son un dataset chico y controlado, **no** `prestadores.json`:
-en el JSON actual **ninguno de los 50 prestadores tiene `precio` ni `distanciaKm`**, así que no serviría para probar
-el ordenamiento por precio. Cada registro del fixture existe por un motivo (documentado en el archivo): empate de calificación,
-tildes, precio 0, sin precio, calificación 0, etc. Además `datosReales.test.ts` verifica lo mismo contra el JSON real.
+Los datos de prueba (`backend/src/tests/fixtures.ts`) son un dataset chico y controlado, **no** `prestadores json`: en el JSON actual **ninguno de los 50 prestadores tiene `precio` ni `distanciaKm`**, así que no serviría para probar el ordenamiento por precio. Cada registro del fixture existe por un motivo (documentado en el archivo): empate de calificación, tildes, precio 0, sin precio, calificación 0, etc. Además `datosReales.test.ts` verifica lo mismo contra el JSON real.
 
 ## Casos y justificación
 
@@ -106,7 +103,7 @@ Se rompió el código a propósito y las pruebas fallaron como corresponde:
 
 | Defecto introducido | Resultado |
 |---|---|
-| Quitar la normalización de tildes en `normalizar` | 8 pruebas fallan |
+| Sacar la normalización de tildes en `normalizar` | 8 pruebas fallan |
 | Tratar "sin precio" como 0 al ordenar | 4 pruebas fallan |
 | Invertir el sentido del orden por calificación | 6 pruebas fallan |
 
@@ -115,6 +112,5 @@ Se rompió el código a propósito y las pruebas fallaron como corresponde:
 - La cobertura de `EstrategiaOrdenamiento.ts` es 100 %. `PrestadorService.ts` queda en ~66 % porque
   las pruebas **no** cubren el CRUD (`crear`, `actualizar`, `eliminar`, validaciones), que está fuera del alcance de esta tarea.
   La cobertura total es ~78%.
-- No se prueba el controlador HTTP (`prestadorController`) ni se levanta el servidor Express; el contrato HTTP se verifica
-  del lado del frontend (`prestadoresApi.test.ts`) y la lógica del lado del servicio.
+- No se prueba el controlador HTTP (`prestadorController`) ni se levanta el servidor Express; el contrato HTTP se verifica del lado del frontend (`prestadoresApi.test.ts`) y la lógica del lado del servicio.
 - Los tests de `App` usan un backend simulado (`fetch` falso): validan el comportamiento de la interfaz, no la integración real por red.

@@ -92,142 +92,102 @@ proyecto-integrador/
 
 ---
 
+## Estado actual
+
+Las funcionalidades descritas arriba son el objetivo del proyecto; **no todas están implementadas**.
+
+- **Frontend (React, TypeScript, Vite):** lista prestadores, filtra por servicio y ordena por calificación, precio, cercanía o servicio. Muestra carga, errores, resultados vacíos y botón para reintentar.
+- **Backend (Node.js, Express, TypeScript):** API de clientes, prestadores y visitas con reglas de validación; `PrestadorService.filtrar` usa estrategias de ordenamiento. El frontend consume `GET /api/prestadores`.
+- **Datos:** los servicios usan `Map` en memoria. Los prestadores iniciales están en `backend/src/data/prestadores.json`. Las altas y modificaciones se pierden al reiniciar el backend y no se comparten entre procesos. No se necesita PostgreSQL.
+- **Limitaciones:** no hay registro ni inicio de sesión; la interfaz no permite crear visitas ni gestionar solicitudes. Precio y distancia son campos opcionales y no están presentes en los prestadores iniciales; la aplicación no calcula distancias reales.
+
 ## Instalación
 
-### 1. Clonar el repositorio
+Se recomienda Node.js 22, la versión utilizada en integración continua. Desde la raíz del repositorio:
 
 ```bash
 git clone https://github.com/NCastellini/metodologia-2-grupo-7.git
 cd metodologia-2-grupo-7
+npm --prefix backend ci
+npm --prefix frontend ci
 ```
 
-### 2. Instalar dependencias del frontend
+Cada parte tiene su propio `package.json` y `package-lock.json`. Los comandos se ejecutan desde la **raíz**.
 
-```bash
-cd frontend 
-npm install
-```
+## Configuración y ejecución
 
-### 3. Instalar dependencias del backend
+El backend utiliza `PORT=3000` por defecto. Si necesitás otro puerto, copiá `.env.example` a `.env` **en la raíz** y cambiá `PORT`. Para que el frontend se conecte a ese puerto, copiá también `frontend/.env.example` a `frontend/.env` y ajustá `VITE_API_URL` (sin barra final).
 
-```bash
-cd ../backend
-npm install
-```
-
-### 4. Configurar las variables de entorno
-
-Crear un archivo `.env` a partir de `.env.example` ubicado en la raíz del proyecto:
-
-### CMD
-```bash
-copy .env.example .env
-```
-### PowerShell
-```bash
+```powershell
+# PowerShell
 Copy-Item .env.example .env
+Copy-Item frontend/.env.example frontend/.env
 ```
-### Linux
+
 ```bash
+# Linux / macOS / Git Bash
 cp .env.example .env
+cp frontend/.env.example frontend/.env
 ```
 
-Configurar `PORT` si se desea cambiar el puerto del backend. No se requieren credenciales de base de datos.
-
-**El archivo `.env` no debe subirse al repositorio.**
-
----
-
-## Almacenamiento en memoria
-
-Los servicios guardan clientes, prestadores y visitas en memoria mediante `Map`. No se utiliza PostgreSQL ni se necesita instalar un gestor de base de datos.
-
-Al reiniciar el backend se pierden los cambios, clientes y visitas creados durante la ejecución. Los prestadores iniciales se vuelven a cargar desde `backend/src/data/prestadores.json`; ese archivo no guarda las modificaciones realizadas por la API.
-
-Los datos no se comparten entre distintos procesos del backend.
-
----
-
-## Ejecución en desarrollo
-
-### Frontend
-
-Desde la carpeta `frontend`:
+Abrí **dos terminales en la raíz**:
 
 ```bash
-npm run dev
+# Terminal 1: API
+npm --prefix backend run dev
 ```
-
-La aplicación estará disponible en la dirección indicada por Vite en la terminal.
-
-### Backend
-
-Desde la carpeta `backend`:
 
 ```bash
-npm run dev
+# Terminal 2: interfaz
+npm --prefix frontend run dev
 ```
 
-La API estará disponible en el puerto configurado mediante las variables de entorno.
+Abrí la URL que muestra Vite (normalmente `http://localhost:5173`). La API usa `http://localhost:3000` por defecto. Si la API no responde, la interfaz mostrará un mensaje y permitirá reintentar.
 
----
+## Demostración
 
-## Variables de entorno
-
-Las variables necesarias se encuentran documentadas en:
+1. Con ambos servidores en marcha, abrir la interfaz y consultar la lista de prestadores.
+2. Elegir un servicio, después un criterio y sentido de orden. El frontend envía la consulta y el backend filtra y ordena.
+3. Mostrar directamente las respuestas de la API en un navegador:
 
 ```text
-.env.example
+http://localhost:3000/
+http://localhost:3000/api/prestadores
+http://localhost:3000/api/prestadores?servicios=Gasista&ordenarPor=calificacion&orden=desc
+http://localhost:3000/api/prestadores/1
 ```
 
-Ejemplo:
+Los endpoints se definen en `backend/src/routes/` (`/api/clientes`, `/api/prestadores`, `/api/visitas`). Admiten `GET /`, `GET /:id`, `POST /`, `PUT /:id` y `DELETE /:id`. Los modelos del cuerpo JSON están en `backend/src/models/`. Para crear una visita se necesitan cliente y prestador existentes. La disponibilidad evita dos visitas **no canceladas** con mismo prestador, fecha y hora exacta; no calcula superposiciones por duración.
 
-```env
-PORT=3000
+## Pruebas y calidad
 
-JWT_SECRET=super_secret
+```bash
+npm --prefix backend test
+npm --prefix frontend test
+npm --prefix backend run lint
+npm --prefix backend run typecheck
+npm --prefix frontend run lint -- --max-warnings=0
+npm --prefix backend run build
+npm --prefix frontend run build
 ```
 
-> Los valores reales de las variables de entorno son locales y no deben versionarse.
+Los tests usan Vitest y se ejecutan una sola vez con `npm test`. Los del backend verifican búsqueda, normalización y ordenamiento; los del frontend comprueban la consulta a la API y lo que ve el usuario con respuestas simuladas. **No levantan un servidor real**. Casos, decisiones, limitaciones y cobertura: [Pruebas](docs/testing.md).
 
----
+ESLint y TypeScript aportan controles estáticos; no reemplazan los tests. La mejora de código y el workflow de CI están documentados en [Calidad e integración continua](docs/calidad.md). GitHub Actions comprueba instalación, lint, tests y compilación en pushes y pull requests hacia `dev` o `main`; no despliega el proyecto.
 
-## Estado del proyecto
+## Dónde encontrar cada parte
 
-El proyecto se encuentra en la etapa inicial de configuración.
-
-### Estado actual
-
-* [x] Configuración inicial del frontend.
-* [x] Configuración inicial del backend.
-* [x] Almacenamiento en memoria.
-* [x] Configuración de variables de entorno.
-* [x] Configuración del repositorio.
-* [x] Implementación del registro e inicio de sesión.
-* [x] Implementación de perfiles.
-* [x] Implementación de búsqueda de prestadores.
-* [x] Implementación de solicitudes de visita.
-
-### Próximos pasos
-
-* [ ] Gestión de solicitudes por parte del prestador.
-* [ ] Integración frontend/backend.
-* [ ] Pruebas del sistema.
-
----
+| Ubicación | Contenido |
+| --- | --- |
+| `frontend/src/` | Interfaz, componentes y cliente HTTP |
+| `backend/src/routes/` y `backend/src/controllers/` | Endpoints y respuestas HTTP |
+| `backend/src/services/` y `backend/src/strategies/` | Reglas de negocio y criterios de ordenamiento |
+| `backend/src/tests/` y `frontend/src/tests/` | Tests automatizados |
+| `docs/decisiones-diseño.md` | Decisiones técnicas y sus alternativas |
+| `.github/workflows/ci.yml` | Automatización de verificaciones |
 
 ## Integrantes
 
 - Castellini Nicolas
 - Strizzi Román
 - Peralta Julián
-
----
-
-## Repositorio
-
-Repositorio del proyecto:
-
-```text
-https://github.com/NCastellini/metodologia-2-grupo-7.git
-```
